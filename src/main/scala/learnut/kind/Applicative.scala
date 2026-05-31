@@ -1,7 +1,7 @@
 package learnut.kind
 
 trait Applicative[F[_]] extends Functor[F] {
-  def point[A](a: A): F[A]
+  def pure[A](a: A): F[A]
   
   def lift[A, B](ff: F[A => B]): F[A] => F[B]
   

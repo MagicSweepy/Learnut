@@ -1,22 +1,9 @@
 package learnut.kind
 
-// F[A] ~ (C, A)
-trait Cartesian[F[_], C] extends Functor[F] with Traversable[F] {
-  def to[A](fa: F[A]): (C, A)
-  def from[A](fa: (C, A)): F[A]
+trait Cartesian[F[_, _]] extends Profunctor[F] {
+  def _1[A, B, C](fab: F[A, B]): F[(A, C), (B, C)]
 
-  override def map[A, B](fa: F[A])(f: A => B): F[B] = {
-    val (c, a) = to(fa)
-    from((c, f(a)))
-  }
+  def _2[A, B, C](fab: F[A, B]): F[(C, A), (C, B)] = dimap(_1(fab))(swap, swap)
 
-  override def foldMap[A, M](m: Monoid[M])(fa: F[A])(f: A => M): M = {
-    val (_, a) = to(fa)
-    f(a)
-  }
-
-  override def traverse[A, B, T[_]](ap: Applicative[T])(fa: F[A])(f: A => T[B]): T[F[B]] = {
-    val (c, a) = to(fa)
-    ap.map(f(a))(b => from((c, b)))
-  }
+  private def swap[X, Y]: ((Y, X)) => (X, Y) = { case (y, x) => (x, y) }
 }
