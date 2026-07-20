@@ -6,7 +6,7 @@
 
 本文试图以 Scala 3 为蓝本给函数式编程里用到的单子与幺半范畴结构一个纯范畴论式的解释，我们把类型作为对象，纯函数 `A => B`  看作态射，以此构成一个范畴 $$\textsf{Scala}$$。
 
-### 有限积与闭 Cartesian 范畴
+## 有限积与闭 Cartesian 范畴
 
 我们先按照顺序定义构造出闭 Cartesian 范畴中的几个条件，其是从最基本的积推广而来的。
 
@@ -52,7 +52,7 @@ def uncurry[A, B, C](g: C => A => B): ((C, A)) => B = { case (c, a) => g(c)(a) }
 
 也就是说，任取 `f: ((C, A)) ⇒ B` 存在唯一的 `curry(f)` 使得 `uncurry(curry(f)) == f`，反过来也一样，也就是说 Curry 化与反 Curry 化构成一一对应，这相当于闭 Cartesian 范畴里的**闭性**。
 
-#### 有限积的伴随与切片范畴
+### 有限积的伴随与切片范畴
 
 在第一次接触时，我因为投影态射与终对象的缘故曾猜测闭 Cartesian 范畴与投射极限（逗号范畴 $$(\Delta /\beta$$) 的终对象，其中 $$\beta: \mathcal{D}^{\mathrm{op}}\to\mathcal{C}$$，对角函子 $$\Delta: \mathcal{C} \to\mathcal{C}^{\mathcal{D}}$$）有什么关系，但实际上这两个不一样。首先就是，对角函子是把一个对象复制成多个同样的对象，比如取 $$\Delta: A\mapsto A\times A$$ 的情况，此时积是它的右伴随；但是指数对象不一样，指数对象必须要固定一个 $$A$$ 的情况下的积，也就是 $$A\times-$$ 的右伴随，这个操作对应的就是我们刚才讨论过的 Curry 化。
 
@@ -92,7 +92,7 @@ $$
 
 ~~（TODO：局部 Cartesian 范畴，依赖积，依赖和的伴随关系，指数对象 = 沿投影的依赖积特例）~~
 
-#### 关于 nLab 上的使用幺半范畴的定义的解释
+### 关于 nLab 上的使用幺半范畴的定义的解释
 
 这里额外说说当时学习时参考过的 [nLab](https://ncatlab.org/nlab/show/cartesian+closed+category) 上的定义，这里的定义结合上文比较好理解的就是这个内部 Hom，这点其实就是我们申明过的指数对象，但是这个 Cartesian 幺半结构比较诡异（也许因为 nLab 向来会概念套概念定义），对于不了解这部分的初学者来说很绕。
 
@@ -113,10 +113,10 @@ $$
 
 第 2 条的等价描述就是我们上面的泛性质定义与这里讨论的闭 Cartesian 幺半范畴定义。
 
-### 松幺半函子与 Scala Applicative
+## 松幺半函子与 Scala Applicative
 
 ~~（TODO：完善描述）~~
 
-### 自函子范畴中的幺半群对象与 Scala Monad
+## 自函子范畴中的幺半群对象与 Scala Monad
 
 ~~（TODO：完善描述）~~
