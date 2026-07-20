@@ -15,7 +15,7 @@
 * **积对象** $$A\times B\in\mathrm{Ob}(\mathcal{C})$$
 * **投影态射** $$\pi_{A}\in \mathrm{Hom}_{\mathcal{C}}(A\times B, A)$$ 与 $$\pi_{B}: A\times B \to B$$ ，其满足：任取对象 $$C\in\mathrm{Ob}(\mathcal{C})$$ 与一对态射$$f\in\mathrm{Hom}_{\mathcal{C}}(C, A)$$ 与 $$g\in\mathrm{Hom}_{\mathcal{C}}(C, B)$$，存在态射 $$h\in\mathrm{Hom}_{\mathcal{C}}(C, A\times B)$$ 使得下图交换：
 
-<figure><img src=".gitbook/assets/image.png" alt="" width="364"><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
 
 按照 [nLab](https://ncatlab.org/nlab/show/cartesian+closed+category) 上的说法，所谓的**有限积**就是有限个对象的积。在 $$\textsf{Scala}$$ 范畴中，积对象就是元组  `(A, B)` ，投影态射就是 `_1` 和 `_2` 方法（事实上这里标准的记号应该就是 $$\pi_{1}$$ 和 $$\pi_{2}$$ 但显然我更喜欢我自己的记法）。这个泛性质就相当于在定义一个新的纯函数：
 
@@ -34,7 +34,7 @@ pi(f, g).andThen(_._2) == g
 
 除了有限积以外，**闭 Cartesian 范畴**还要求拥有**终对象**（任取对象 $$B\in\mathrm{Ob}(\mathcal{C})$$ 其 Hom 集 $$\mathrm{Hom}_{\mathcal{C}}(B, A)$$ 只有1个元素，对应 Scala 里的 `Unit`，即 `A ⇒ Unit`），以及一个特殊的对象，我们称其为**指数对象**：任取对象 $$A, B\in\mathrm{Ob}(\mathcal{C})$$ 存在对象 $$B^{A}\in\mathrm{Ob}(\mathcal{C})$$ 与态射 $$e\in\mathrm{Hom}_{\mathcal{C}}(B^{A}\times A, B)$$ 使得任取 $$C\in\mathrm{Ob}(\mathcal{C})$$ 下图交换：
 
-<figure><img src=".gitbook/assets/image (2).png" alt="" width="282"><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
 
 也就是说，这里相当于要求任取态射 $$f\in\mathrm{Hom}_{\mathcal{C}}(C\times A, B)$$ 存在唯一的态射 $$g\in\mathrm{Hom}_{\mathcal{C}}(C, B^{A})$$ 使得恒成立 $$f = e\circ (g\times \mathrm{id}_{A})$$。用 Scala 解释，指数对象 $$B^{A}$$ 就是 $$A ⇒ B$$，态射 $$e$$ 就是其的应用，即：
 
@@ -76,7 +76,7 @@ $$
 * 对象：任取 $$D\in\mathrm{Ob}(\mathcal{D})$$，二元组 $$(D, p: TD\to A)$$；
 * 态射：态射 $$f\in\mathrm{Hom}_{\mathcal{D}}(D, D')$$ 使得下图交换：
 
-<figure><img src=".gitbook/assets/image (3).png" alt="" width="241"><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 此时 $$p\in\mathrm{Hom}_{\mathcal{D}}(TD, A)$$ 可以想象为一族被 $$A$$ 参数化的空间，任取 $$a\in A$$，$$p^{-1}(a)$$ 这种构造因为一些几何学缘故被称为 $$D$$ 在点 $$a$$ 的**纤维**，记作 $$D_{a}$$。一般来说，我们为了简便起见以下讨论的切片范畴都是上述的 $$T$$ 取 $$\mathrm{id}_{\mathcal{C}}$$ 的情况，也就是 $$(\mathrm{id}_{\mathcal{C}}/A)$$，此时其的对象 $$(D, p: D\to A)$$ 也被称为纤维，而且表达上更直接一些（所以我们可以称其为 $$A$$ 上长出来的纤维）。
 
