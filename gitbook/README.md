@@ -30,7 +30,7 @@ pi(f, g).andThen(_._1) == f
 pi(f, g).andThen(_._2) == g
 ```
 
-按图索骥的结果也是一致的。任何满足这两个式子的纯函数 `h: C ⇒ (A, B)` 必定是 `pi(f, g)`，因为我们显而易见地可以发现：若 `h(c)._1 == f(c)` 且 \`h(c).\_2 == g(c)\`，那这个 \`h(c)\` 只能是 `(f(c), g(c))`。
+按图索骥的结果也是一致的。任何满足这两个式子的纯函数 `h: C ⇒ (A, B)` 必定是 `pi(f, g)`，因为我们显而易见地可以发现：若 `h(c)._1 == f(c)` 且 `h(c)._2 == g(c)`，那这个 `h(c)` 只能是 `(f(c), g(c))`。
 
 除了有限积以外，**闭 Cartesian 范畴**还要求拥有**终对象**（任取对象 $$B\in\mathrm{Ob}(\mathcal{C})$$ 其 Hom 集 $$\mathrm{Hom}_{\mathcal{C}}(B, A)$$ 只有1个元素，对应 Scala 里的 `Unit`，即 `A ⇒ Unit`），以及一个特殊的对象，我们称其为**指数对象**：任取对象 $$A, B\in\mathrm{Ob}(\mathcal{C})$$ 存在对象 $$B^{A}\in\mathrm{Ob}(\mathcal{C})$$ 与态射 $$e\in\mathrm{Hom}_{\mathcal{C}}(B^{A}\times A, B)$$ 使得任取 $$C\in\mathrm{Ob}(\mathcal{C})$$ 下图交换：
 
@@ -88,9 +88,17 @@ $$
 \begin{CD}X\times_{A}Y@>>>Y\\@VVV@VVqV\\X@>>p>A\end{CD}
 $$
 
-假若我们转化到 $$\textsf{Set}$$ 范畴上讨论，可以看出 $$X\times_{A} Y = \{ (x, y) | p(x) = q(y) \}$$。所以这个切片范畴本身就是它自己的 Cartesian 范畴，因为终对象 $$\mathrm{id}_{A}$$ 存在，拉回作为积。
+假若我们转化到 $$\textsf{Set}$$ 范畴上讨论，可以看出 $$X\times_{A} Y = \{ (x, y) | p(x) = q(y) \}$$。所以这个切片范畴本身就是它自己的 Cartesian 范畴，因为终对象 $$\mathrm{id}_{A}$$ 存在，拉回作为积。我们把每个切片范畴都是闭 Cartesian 范畴的范畴叫**局部闭 Cartesian范畴**，这是因为这个条件实际上相当于任取态射 $$f\in\mathrm{Hom}(X, Y)$$ 时，拉回 $$f^*: (S/Y) \to (S/X)$$ 有右伴随，此时这个右伴随记作 $$\Pi_f$$，称为**依赖积**，而其左伴随如果存在，则称为**依赖和**，记作 $$\Sigma_f$$（因为拉回给出了切片范畴的有限积，且积始终有右伴随）。当 $$X = 1$$ （终对象）时，可以看到这个切片范畴 $$(S/1)$$ 是同构于原范畴的，也就是说局部闭 Cartesian 范畴肯定也是闭 Cartesian 范畴（前者比后者更强）。还是用  $$\textsf{Set}$$ 来举例，对于 $$f\in\mathrm{Hom}_{\textsf{Set}}(X, Y)$$：
 
-~~（TODO：局部 Cartesian 范畴，依赖积，依赖和的伴随关系，指数对象 = 沿投影的依赖积特例）~~
+* 拉回 $$f^*:\{B_{y}\}_{y\in Y}\mapsto\{B_{f(x)}\}_{x\in X}$$，也就是把 $$Y$$ 上的一族元素拉到 $$A$$ 上。
+* 依赖和 $$\Sigma_{f}: \{A_{x}\}_{x\in X}\mapsto\sum_{x\in f^{-1}(y)}A_{x}$$，也就是把 $$X$$ 上的一族元素沿 $$f$$ 求和。
+* 依赖积 $$\Pi_{f}: \{A_{x}\}_{x\in X}\mapsto\prod_{x\in f^{-1}(y)}A_{x}$$，也就是把 $$X$$ 上的一族元素沿 $$f$$ 求积。
+
+简单来说，局部这个性质相当于是让闭结构沿着每个切片成立，对一般的闭 Cartesian 范畴，只有全局的范畴（也就是本身）上有指数对象，但是在局部闭 Cartesian 范畴上，任意上下文都可以在相对其的切片范畴上获得这个闭结构，使之成为闭 Cartesian 范畴。
+
+用 Scala 来说，局部闭 Cartesian 范畴提供的就是任意上下文中的输入依赖的函数空间（同时它保持了一些结构，比如拉回），比如 `(x: X) ⇒ a(x)`。上面提到的伴随关系 $$\Sigma_{f}\dashv f^{*} \dashv\Pi_{f}$$ 实际上就是 $$f$$ 上的存在量词（对应依赖和）与全称量词（对应依赖积）。
+
+我们知道 $$(S/1)$$ 是同构于其自身的（上面的 $$j_{X}$$ 那段的例子），所以现在我们可以沿着刚才的讨论研究一下它的性质，唯一的态射 $$X\to 1$$ 的拉回 $$(S/1)\to(S/X)$$就是给一个对象 $$Y$$送到 $$X\times Y\to X$$，右伴随则是将任何纤维送到纤维积，对于 $$X\times Y\to X$$ 的情况，结果正好就是指数对象 $$Y^{X}$$。可以说，指数对象的那条泛性质基本上就是这个伴随关系里的特例。在 Scala 里，这个拉回相当于一个常函数。
 
 ### 关于 nLab 上的使用幺半范畴的定义的解释
 
@@ -115,8 +123,91 @@ $$
 
 ## 松幺半函子与 Scala Applicative
 
-~~（TODO：完善描述）~~
+现在我们举两个幺半范畴 $$(\mathcal{V}, \otimes, 1)$$ 和 $$(\mathcal{W}, \oplus, i)$$，它们之间的所谓**松幺半函子**大抵指的是以下的结构：
+
+* 函子 $$F: \mathcal{V}\to\mathcal{W}$$
+* 自然变换 $$\alpha: F(A)\oplus F(B)\to F(A\otimes B)$$
+* 幺元之间的态射：$$\mathrm{id}: i\to F(1)$$
+
+满足相应的结合律等性质。我们接下来先介绍在 Scala 里如何定义这些结构，再对此进行直接的讨论。
+
+参考 [Scala Cats](https://typelevel.org/cats/) 库，一个函子的定义大致是：
+
+```scala
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
+```
+
+我们知道，在先前定义的 $$\textsf{Scala}$$ 范畴中，`Tuple2` 是运算，而幺元则是 `Unit`，所以我们自然就有一些幺半范畴的相应结构对应的运算，例如：
+
+```scala
+def associateLeft[A, B, C]: (((A, B), C)) => (A, (B, C))
+  = { case ((a, b), c) => (a, (b, c)) }
+
+def associateRight[A, B, C]: ((A, (B, C))) => ((A, B), C)
+  = { case (a, (b, c)) => ((a, b), c) }
+```
+
+把 `F[_]` 看作一个自函子时，如果它有幺元化和二元运算时，其就是 `(Tuple2, Unit)` 的松幺半函子：
+
+```scala
+trait LaxMonoidal[F[_]] extends Functor[F] {
+  def unit: F[Unit]
+  
+  def op[A, B](fa: F[A], fb: F[B]): F[(A, B)]
+}
+```
+
+当然，因为我们没法在类型上强制约束其满足结合律等性质，所以我们在讨论中都忽略这部分。我们来看最具典型的 `Applicative` 结构：
+
+```scala
+trait Applicative[F[_]] extends Functor[F[_]] {
+  def pure[A](a: A): F[A]
+  
+  def ap[A, B](ff: F[A => B])(fa: F[A]): F[B]
+  
+  override def map[F, B](fa: F[A])(f: A => B): F[B]
+    = ap(pure(f))(fa)
+}
+```
+
+可以看到，这个结构其实是可以实现出 `LaxMonoidal` 的结构的：
+
+```scala
+trait Applicative[F[_]] extends LaxMonoidal[F] {
+  def pure[A](a: A): F[A]
+  
+  def ap[A, B](ff: F[A => B])(fa: F[A]): F[B]
+  
+  override def map[F, B](fa: F[A])(f: A => B): F[B]
+    = ap(pure(f))(fa)
+    
+  override def unit: F[Unit] = pure(())
+  
+  override def op[A, B](fa: F[A], fb: F[B]): F[(A, B)]
+    = ap(map(fa)(a => b => (a, b)))(fb)
+}
+```
+
+需要注意的是，我们的实现简化了一些过程，与 [Scala Cats](https://typelevel.org/cats/) 中的有所差别（比如其让 `ap` 操作由一个 `Apply`  带来，同时 `Applicative` 自带一个 `unit` 方法）。
 
 ## 自函子范畴中的幺半群对象与 Scala Monad
 
-~~（TODO：完善描述）~~
+忽略大小问题，可以把所有自函子作为对象，自然变换看作态射看成一个范畴，这个范畴上的幺半结构大致是函子之间的组合 `[A] =>> F[G[A]]` 与恒等函子 `Id[A] = A` 构成的，其上的幺半群对象就是一个自函子配上乘法组合与幺元的自然变换（对应 `pure`）：
+
+```scala
+trait Monad[M[_]] extends Applicative[M] {
+  def flatten[A](mma: M[M[A]]): M[A]
+  
+  def flatMap[A, B](ma: M[A])(f: A => M[B]): M[B]
+    = flatten(map(ma)(f))
+  
+  override def pure[A](a: A): M[A]
+  
+  override def map[A, B](ma: M[A])(f: A => B): M[B]
+    = flatMap(ma)(a => pure(f(a)))
+}
+```
+
+这里的 `flatten` 对应的就是乘法组合，你可以在 [Scala Cats](https://typelevel.org/cats/) 中的 `Monad` 实现的接口 `FlatMap` 中看到它。
