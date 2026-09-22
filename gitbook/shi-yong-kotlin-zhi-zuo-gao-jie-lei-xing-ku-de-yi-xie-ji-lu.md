@@ -4,7 +4,7 @@
 
 本文参考了 [Magnus Smith 的几篇博客](https://blog.scottlogic.com/magnussmith)，以及一些同类型的库，例如 Scala 的 [Cats](https://github.com/typelevel/cats) 与 Haskell 里的一些库，比如 [Optics](https://hackage.haskell.org/package/optics) 等。
 
-## Scala 高阶类型的优势
+## 高阶类型
 
 **高阶类型**（Higher Kinded Type）也叫结合类型构造器（Associated Type Constructor），在 Scala 里可以自如地表达，因为 Scala 的泛型是可以带类型构造器的，但是 Java 和 Kotlin 就不行（实际上，大部分 JVM 语言都不怎么原生支持）。
 
@@ -22,6 +22,24 @@ interface Kind<F, A>
 interface Kind2<F, A, B>
 ```
 
+基本思路是固定一个 Arity 和描述其的 Witness：
+
+```kotlin
+sealed interface Type
+
+object Unary : Type // F[_]
+
+object Binary : Type // F[_, _]
+
+interface TypeAccessor<T : Type>
+
+interface Kind<F : TypeAccessor<*>, A> // F[A]
+
+interface Kind2<F : TypeAccessor<*>, A, B> // F[A, B]
+```
+
+这样的表达算是比较常见的一种妥协了（可惜 Kotlin 的 type alias 没法做得更漂亮）。
+
 ### 类型 Lambda
 
 在 Scala 的 [Cats](https://github.com/typelevel/cats) 里有一个插件 [Kind Projector](https://github.com/typelevel/kind-projector) 实现了类型 Lambda 的语法，比如：
@@ -31,4 +49,19 @@ SemigroupK[λ[α => F[α, α]]]
 ```
 
 这里的意思就是假设这里 `SemigroupK` 需要一个一元的构造器 `G`，这个 Lambda 表示了 `G[A] = F[A, A]` 这样的规则，这是种部分应用类似的；[Cats](https://github.com/typelevel/cats) 里实现的一些例如 Kleisli Arrow 这类的都用了这样的表达。
+
+这部分我们的做法是用扩展函数，比如对角化：
+
+```kotlin
+// λ[α => F[α, α]]
+class Diagonal<F : TypeAccessor<Binary>> : TypeAccessor<Unary>
+
+fun <F : TypeAccessor<Binary>, A> Kind<Diagonal<F>, A>.asKind2(): Kind2<F, A, A>
+    = this as Kind2<F, A, A>
+
+fun <F : TypeAccessor<Binary>, A> Kind2<F, A, A>.asDiagonal(): Kind<Diagonal<F>, A>
+    = this as Kind<Diagonal<F>, A>
+```
+
+基本上就是对着作用翻译，但总比 Java 简单很多。
 
